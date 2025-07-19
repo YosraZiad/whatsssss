@@ -1,0 +1,15 @@
+header > div {
+  display: block;
+}
+#header-controls {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+#header-controls > .triggers {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}

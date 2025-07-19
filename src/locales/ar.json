@@ -1,0 +1,24 @@
+{
+  "Customers": {
+    "name": "العملاء",
+    "company": "الشركة",
+    "mobile": "رقم الجوال",
+    "master_mobile": "رقم الجوال الرئيسي",
+    "search_customers": "ابحث عن عملاء...",
+    "add_customer": "إضافة عميل",
+    "loading_customers": "جاري تحميل العملاء...",
+    "no_customers_found": "لا توجد عملاء.",
+    "view": "عرض",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "actions": "الإجراءات",
+    "showing": "عرض",
+    "of": "من",
+    "customers": "عملاء",
+    "previous": "السابق",
+    "next": "التالي",
+    "customize_columns": "تخصيص الأعمدة",
+    "customize_columns_title": "تخصيص الأعمدة",
+    "refresh_tooltip": "تحديث قائمة العملاء"
+  }
+}

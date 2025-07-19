@@ -1,0 +1,26 @@
+{
+  "Customers": {
+    "name": "Name",
+    "company": "Company",
+    "mobile": "Mobile",
+    "master_mobile": "Master Mobile",
+    "search_customers": "Search Customers...",
+    "add_customer": "Add Customer",
+    "loading_customers": "Loading customers...",
+    "error": "Error",
+    "no_customers_found": "No customers found.",
+    "actions": "Actions",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "previous": "Previous",
+    "next": "Next",
+    "showing": "Showing",
+    "of": "of",
+    "customers": "customers",
+    "customize_columns": "Customize Columns",
+    "refresh": "Refresh",
+    "customize_columns_title": "Customize Columns",
+    "refresh_tooltip": "Refresh the customers list"
+  }
+}
