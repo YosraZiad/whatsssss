@@ -2,9 +2,10 @@ import { NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { locales } from '../../i18n';
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/providers/auth-provider";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from 'sonner';
 import {
   SidebarInset,
   SidebarProvider,
@@ -53,23 +54,25 @@ export default async function LocaleLayout(props: {
           enableSystem
           disableTransitionOnChange
         >
-          <NextIntlClientProvider locale={locale} messages={messages}>
-            <SidebarProvider
-              style={
-                {
-                  "--sidebar-width": "calc(var(--spacing) * 72)",
-                  "--header-height": "calc(var(--spacing) * 12)",
-                } as React.CSSProperties
-              }
-            >
-              <AppSidebar variant="inset" />
-              <SidebarInset>
-                <SiteHeader />
-                {children}
-        <Toaster position="top-center" reverseOrder={false} />
-              </SidebarInset>
-            </SidebarProvider>
-          </NextIntlClientProvider>
+          <AuthProvider>
+            <NextIntlClientProvider locale={locale} messages={messages}>
+              <SidebarProvider
+                style={
+                  {
+                    "--sidebar-width": "calc(var(--spacing) * 72)",
+                    "--header-height": "calc(var(--spacing) * 12)",
+                  } as React.CSSProperties
+                }
+              >
+                <AppSidebar variant="inset" />
+                <SidebarInset>
+                  <SiteHeader />
+                  {children}
+                  <Toaster />
+                </SidebarInset>
+              </SidebarProvider>
+            </NextIntlClientProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
