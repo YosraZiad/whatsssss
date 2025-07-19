@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { AuthService, LoginCredentials } from '@/lib/auth';
 import { toast } from 'sonner';
 
@@ -26,6 +27,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     // التحقق من وجود مستخدم محفوظ عند تحميل التطبيق
@@ -45,9 +48,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await AuthService.login(credentials);
       
       if (response.success && response.result) {
-        const { accessToken, user: userData } = response.result;
+        const { 
+          accessToken, 
+          refreshToken, 
+          expiresIn, 
+          user: userData 
+        } = response.result;
         
-        AuthService.saveToken(accessToken);
+        AuthService.saveToken(accessToken, refreshToken, expiresIn);
         AuthService.saveUser(userData);
         setUser(userData);
         
@@ -69,6 +77,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     AuthService.logout();
     setUser(null);
     toast.success('تم تسجيل الخروج بنجاح');
+    
+    // استخراج الـ locale من المسار الحالي
+    const locale = pathname.split('/')[1] || 'ar'; // افتراضي العربية
+    
+    // إعادة التوجيه إلى صفحة تسجيل الدخول مع الـ locale
+    router.push(`/${locale}/login`);
   };
 
   const value: AuthContextType = {

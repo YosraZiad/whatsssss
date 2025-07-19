@@ -62,14 +62,28 @@ class AuthService {
             throw new Error(((_error_response = error.response) === null || _error_response === void 0 ? void 0 : (_error_response_data = _error_response.data) === null || _error_response_data === void 0 ? void 0 : (_error_response_data_error = _error_response_data.error) === null || _error_response_data_error === void 0 ? void 0 : _error_response_data_error.message) || 'فشل في الاتصال بالخادم');
         }
     }
-    static saveToken(token) {
+    static saveToken(token, refreshToken, expiresIn) {
         if ("TURBOPACK compile-time truthy", 1) {
             localStorage.setItem(this.TOKEN_KEY, token);
+            if (refreshToken) {
+                localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
+            }
+            if (expiresIn) {
+                const expiryTime = Date.now() + expiresIn * 1000;
+                localStorage.setItem(this.TOKEN_EXPIRY_KEY, expiryTime.toString());
+            }
         }
     }
     static getToken() {
         if ("TURBOPACK compile-time truthy", 1) {
-            return localStorage.getItem(this.TOKEN_KEY);
+            const token = localStorage.getItem(this.TOKEN_KEY);
+            // تحقق من انتهاء صلاحية التوكن
+            if (token && this.isTokenExpired()) {
+                console.log('Token expired, attempting refresh...');
+            // يمكن هنا محاولة تجديد التوكن تلقائياً
+            // this.refreshToken();
+            }
+            return token;
         }
         //TURBOPACK unreachable
         ;
@@ -90,11 +104,38 @@ class AuthService {
     static logout() {
         if ("TURBOPACK compile-time truthy", 1) {
             localStorage.removeItem(this.TOKEN_KEY);
+            localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+            localStorage.removeItem(this.TOKEN_EXPIRY_KEY);
             localStorage.removeItem(this.USER_KEY);
         }
     }
+    static getRefreshToken() {
+        if ("TURBOPACK compile-time truthy", 1) {
+            return localStorage.getItem(this.REFRESH_TOKEN_KEY);
+        }
+        //TURBOPACK unreachable
+        ;
+    }
+    static isTokenExpired() {
+        if ("TURBOPACK compile-time truthy", 1) {
+            const expiryTime = localStorage.getItem(this.TOKEN_EXPIRY_KEY);
+            if (expiryTime) {
+                return Date.now() > parseInt(expiryTime);
+            }
+        }
+        return false;
+    }
+    static getTokenExpiryTime() {
+        if ("TURBOPACK compile-time truthy", 1) {
+            const expiryTime = localStorage.getItem(this.TOKEN_EXPIRY_KEY);
+            return expiryTime ? parseInt(expiryTime) : null;
+        }
+        //TURBOPACK unreachable
+        ;
+    }
     static isAuthenticated() {
-        return this.getToken() !== null;
+        const token = this.getToken();
+        return token !== null && !this.isTokenExpired();
     }
     static getAuthHeaders() {
         const token = this.getToken();
@@ -108,6 +149,8 @@ class AuthService {
 }
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_define_property$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])(AuthService, "BASE_URL", '/api');
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_define_property$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])(AuthService, "TOKEN_KEY", 'authToken');
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_define_property$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])(AuthService, "REFRESH_TOKEN_KEY", 'refreshToken');
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_define_property$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])(AuthService, "TOKEN_EXPIRY_KEY", 'tokenExpiry');
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$swc$2f$helpers$2f$esm$2f$_define_property$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["_"])(AuthService, "USER_KEY", 'userInfo');
 // Axios interceptor لإضافة التوكن تلقائياً
 __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].interceptors.request.use((config)=>{
@@ -145,11 +188,13 @@ __turbopack_context__.s({
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/auth.ts [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/sonner/dist/index.mjs [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.signature();
 "use client";
+;
 ;
 ;
 ;
@@ -159,6 +204,8 @@ function AuthProvider(param) {
     _s();
     const [user, setUser] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
+    const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
+    const pathname = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"])();
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "AuthProvider.useEffect": ()=>{
             // التحقق من وجود مستخدم محفوظ عند تحميل التطبيق
@@ -175,8 +222,8 @@ function AuthProvider(param) {
             setIsLoading(true);
             const response = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AuthService"].login(credentials);
             if (response.success && response.result) {
-                const { accessToken, user: userData } = response.result;
-                __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AuthService"].saveToken(accessToken);
+                const { accessToken, refreshToken, expiresIn, user: userData } = response.result;
+                __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AuthService"].saveToken(accessToken, refreshToken, expiresIn);
                 __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AuthService"].saveUser(userData);
                 setUser(userData);
                 __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].success('تم تسجيل الدخول بنجاح!');
@@ -197,6 +244,10 @@ function AuthProvider(param) {
         __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AuthService"].logout();
         setUser(null);
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].success('تم تسجيل الخروج بنجاح');
+        // استخراج الـ locale من المسار الحالي
+        const locale = pathname.split('/')[1] || 'ar'; // افتراضي العربية
+        // إعادة التوجيه إلى صفحة تسجيل الدخول مع الـ locale
+        router.push("/".concat(locale, "/login"));
     };
     const value = {
         user,
@@ -210,11 +261,16 @@ function AuthProvider(param) {
         children: children
     }, void 0, false, {
         fileName: "[project]/src/providers/auth-provider.tsx",
-        lineNumber: 83,
+        lineNumber: 97,
         columnNumber: 5
     }, this);
 }
-_s(AuthProvider, "YajQB7LURzRD+QP5gw0+K2TZIWA=");
+_s(AuthProvider, "JVriBUARie7obrsfVZhTfTjwm5w=", false, function() {
+    return [
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"],
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"]
+    ];
+});
 _c = AuthProvider;
 function useAuth() {
     _s1();
@@ -2441,6 +2497,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$tabler$2f$
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$tabler$2f$icons$2d$react$2f$dist$2f$esm$2f$icons$2f$IconFolder$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__IconFolder$3e$__ = __turbopack_context__.i("[project]/node_modules/@tabler/icons-react/dist/esm/icons/IconFolder.mjs [app-client] (ecmascript) <export default as IconFolder>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$tabler$2f$icons$2d$react$2f$dist$2f$esm$2f$icons$2f$IconHelp$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__IconHelp$3e$__ = __turbopack_context__.i("[project]/node_modules/@tabler/icons-react/dist/esm/icons/IconHelp.mjs [app-client] (ecmascript) <export default as IconHelp>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$tabler$2f$icons$2d$react$2f$dist$2f$esm$2f$icons$2f$IconInnerShadowTop$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__IconInnerShadowTop$3e$__ = __turbopack_context__.i("[project]/node_modules/@tabler/icons-react/dist/esm/icons/IconInnerShadowTop.mjs [app-client] (ecmascript) <export default as IconInnerShadowTop>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$tabler$2f$icons$2d$react$2f$dist$2f$esm$2f$icons$2f$IconKey$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__IconKey$3e$__ = __turbopack_context__.i("[project]/node_modules/@tabler/icons-react/dist/esm/icons/IconKey.mjs [app-client] (ecmascript) <export default as IconKey>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$tabler$2f$icons$2d$react$2f$dist$2f$esm$2f$icons$2f$IconListDetails$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__IconListDetails$3e$__ = __turbopack_context__.i("[project]/node_modules/@tabler/icons-react/dist/esm/icons/IconListDetails.mjs [app-client] (ecmascript) <export default as IconListDetails>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$tabler$2f$icons$2d$react$2f$dist$2f$esm$2f$icons$2f$IconLogin$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__IconLogin$3e$__ = __turbopack_context__.i("[project]/node_modules/@tabler/icons-react/dist/esm/icons/IconLogin.mjs [app-client] (ecmascript) <export default as IconLogin>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$tabler$2f$icons$2d$react$2f$dist$2f$esm$2f$icons$2f$IconSearch$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__IconSearch$3e$__ = __turbopack_context__.i("[project]/node_modules/@tabler/icons-react/dist/esm/icons/IconSearch.mjs [app-client] (ecmascript) <export default as IconSearch>");
@@ -2490,6 +2547,11 @@ function AppSidebar(param) {
                 title: "اختبار API",
                 url: "/api-test",
                 icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$tabler$2f$icons$2d$react$2f$dist$2f$esm$2f$icons$2f$IconApi$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__IconApi$3e$__["IconApi"]
+            },
+            {
+                title: "اختبار Token",
+                url: "/token-test",
+                icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$tabler$2f$icons$2d$react$2f$dist$2f$esm$2f$icons$2f$IconKey$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__IconKey$3e$__["IconKey"]
             }
         ],
         navSecondary: [
@@ -2538,7 +2600,7 @@ function AppSidebar(param) {
                                         className: "!size-5"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/app-sidebar.tsx",
-                                        lineNumber: 103,
+                                        lineNumber: 109,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2546,33 +2608,33 @@ function AppSidebar(param) {
                                         children: t("companyName")
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/app-sidebar.tsx",
-                                        lineNumber: 104,
+                                        lineNumber: 110,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/app-sidebar.tsx",
-                                lineNumber: 102,
+                                lineNumber: 108,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/components/app-sidebar.tsx",
-                            lineNumber: 98,
+                            lineNumber: 104,
                             columnNumber: 13
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/app-sidebar.tsx",
-                        lineNumber: 97,
+                        lineNumber: 103,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/components/app-sidebar.tsx",
-                    lineNumber: 96,
+                    lineNumber: 102,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/app-sidebar.tsx",
-                lineNumber: 95,
+                lineNumber: 101,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$sidebar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SidebarContent"], {
@@ -2581,7 +2643,7 @@ function AppSidebar(param) {
                         items: data.navMain
                     }, void 0, false, {
                         fileName: "[project]/src/components/app-sidebar.tsx",
-                        lineNumber: 113,
+                        lineNumber: 119,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$nav$2d$secondary$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["NavSecondary"], {
@@ -2589,13 +2651,13 @@ function AppSidebar(param) {
                         className: "mt-auto"
                     }, void 0, false, {
                         fileName: "[project]/src/components/app-sidebar.tsx",
-                        lineNumber: 114,
+                        lineNumber: 120,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/app-sidebar.tsx",
-                lineNumber: 112,
+                lineNumber: 118,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$sidebar$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SidebarFooter"], {
@@ -2603,18 +2665,18 @@ function AppSidebar(param) {
                     user: data.user
                 }, void 0, false, {
                     fileName: "[project]/src/components/app-sidebar.tsx",
-                    lineNumber: 117,
+                    lineNumber: 123,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/app-sidebar.tsx",
-                lineNumber: 116,
+                lineNumber: 122,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/app-sidebar.tsx",
-        lineNumber: 94,
+        lineNumber: 100,
         columnNumber: 5
     }, this);
 }

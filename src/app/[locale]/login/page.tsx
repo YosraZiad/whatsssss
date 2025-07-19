@@ -28,10 +28,14 @@ const loginSchema = z.object({
     .string()
     .min(1, "اسم المستخدم أو البريد الإلكتروني مطلوب"),
   password: z.string().min(1, "كلمة المرور مطلوبة"),
-  rememberMe: z.boolean().default(false),
+  rememberMe: z.boolean().optional().default(false),
 });
 
-type LoginFormData = z.infer<typeof loginSchema>;
+type LoginFormData = {
+  userNameOrEmailAddress: string;
+  password: string;
+  rememberMe?: boolean;
+};
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -66,7 +70,7 @@ export default function LoginPage() {
     const credentials: LoginCredentials = {
       userNameOrEmailAddress: data.userNameOrEmailAddress,
       password: data.password,
-      rememberMe: data.rememberMe,
+      rememberMe: data.rememberMe || false,
     };
 
     const success = await login(credentials);

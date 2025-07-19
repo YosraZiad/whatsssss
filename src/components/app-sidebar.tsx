@@ -9,6 +9,7 @@ import {
   IconFolder,
   IconHelp,
   IconInnerShadowTop,
+  IconKey,
   IconListDetails,
   IconLogin,
   IconSearch,
@@ -59,6 +60,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: "اختبار API",
         url: "/api-test",
         icon: IconApi,
+      },
+      {
+        title: "اختبار Token",
+        url: "/token-test",
+        icon: IconKey,
       },
     ],
     navSecondary: [

@@ -52,9 +52,11 @@ const createApiClient = (): AxiosInstance => {
         console.log('Unauthorized access, logging out...');
         AuthService.logout();
         
-        // إعادة توجيه إلى صفحة تسجيل الدخول
+        // إعادة توجيه إلى صفحة تسجيل الدخول مع مراعاة الـ locale
         if (typeof window !== 'undefined') {
-          window.location.href = '/login';
+          const currentPath = window.location.pathname;
+          const locale = currentPath.split('/')[1] || 'ar'; // افتراضي العربية
+          window.location.href = `/${locale}/login`;
         }
       }
       

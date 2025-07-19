@@ -10,8 +10,12 @@ export interface LoginResponse {
   success: boolean;
   result?: {
     accessToken: string;
-    encryptedAccessToken: string;
-    expireInSeconds: number;
+    tokenType?: string;
+    expiresIn?: number;
+    refreshToken?: string;
+    scope?: string;
+    encryptedAccessToken?: string;
+    expireInSeconds?: number;
     userId: number;
     user: {
       id: number;
@@ -23,15 +27,17 @@ export interface LoginResponse {
     };
   };
   error?: {
-    code: number;
+    code: number | string;
     message: string;
-    details: string;
+    details?: string;
   };
 }
 
 export class AuthService {
   private static readonly BASE_URL = '/api';
   private static readonly TOKEN_KEY = 'authToken';
+  private static readonly REFRESH_TOKEN_KEY = 'refreshToken';
+  private static readonly TOKEN_EXPIRY_KEY = 'tokenExpiry';
   private static readonly USER_KEY = 'userInfo';
 
   static async login(credentials: LoginCredentials): Promise<LoginResponse> {
@@ -56,15 +62,33 @@ export class AuthService {
     }
   }
 
-  static saveToken(token: string): void {
+  static saveToken(token: string, refreshToken?: string, expiresIn?: number): void {
     if (typeof window !== 'undefined') {
       localStorage.setItem(this.TOKEN_KEY, token);
+      
+      if (refreshToken) {
+        localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
+      }
+      
+      if (expiresIn) {
+        const expiryTime = Date.now() + (expiresIn * 1000);
+        localStorage.setItem(this.TOKEN_EXPIRY_KEY, expiryTime.toString());
+      }
     }
   }
 
   static getToken(): string | null {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem(this.TOKEN_KEY);
+      const token = localStorage.getItem(this.TOKEN_KEY);
+      
+      // تحقق من انتهاء صلاحية التوكن
+      if (token && this.isTokenExpired()) {
+        console.log('Token expired, attempting refresh...');
+        // يمكن هنا محاولة تجديد التوكن تلقائياً
+        // this.refreshToken();
+      }
+      
+      return token;
     }
     return null;
   }
@@ -86,12 +110,40 @@ export class AuthService {
   static logout(): void {
     if (typeof window !== 'undefined') {
       localStorage.removeItem(this.TOKEN_KEY);
+      localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+      localStorage.removeItem(this.TOKEN_EXPIRY_KEY);
       localStorage.removeItem(this.USER_KEY);
     }
   }
 
+  static getRefreshToken(): string | null {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(this.REFRESH_TOKEN_KEY);
+    }
+    return null;
+  }
+
+  static isTokenExpired(): boolean {
+    if (typeof window !== 'undefined') {
+      const expiryTime = localStorage.getItem(this.TOKEN_EXPIRY_KEY);
+      if (expiryTime) {
+        return Date.now() > parseInt(expiryTime);
+      }
+    }
+    return false;
+  }
+
+  static getTokenExpiryTime(): number | null {
+    if (typeof window !== 'undefined') {
+      const expiryTime = localStorage.getItem(this.TOKEN_EXPIRY_KEY);
+      return expiryTime ? parseInt(expiryTime) : null;
+    }
+    return null;
+  }
+
   static isAuthenticated(): boolean {
-    return this.getToken() !== null;
+    const token = this.getToken();
+    return token !== null && !this.isTokenExpired();
   }
 
   static getAuthHeaders(): { [key: string]: string } {
