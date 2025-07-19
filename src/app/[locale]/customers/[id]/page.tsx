@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { apiClient } from '@/lib/api-client';
 import toast from 'react-hot-toast'; // Correct import
 
 export default function CustomerDetailPage({ params }: { params: { id: string } }) {
@@ -19,14 +20,19 @@ export default function CustomerDetailPage({ params }: { params: { id: string } 
     if (!params?.id) return;
     const fetchCustomer = async () => {
       try {
-        const response = await fetch(`/api/customers/${params.id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch customer');
+        // استخدام apiClient الذي يحتوي على التوكن تلقائياً
+        const response = await apiClient.get(`/customers/${params.id}`);
+        const data = response.data;
+        
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to fetch customer');
         }
-        const data = await response.json();
+        
         setCustomer(data.data); // تأكد أن البيانات في data.data
-      } catch (error) {
+      } catch (error: any) {
         console.error('Fetch error:', error);
+        const errorMessage = error.response?.data?.error || error.message || 'Failed to fetch customer';
+        toast.error(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -37,37 +43,37 @@ export default function CustomerDetailPage({ params }: { params: { id: string } 
 
   const handleUpdate = async (values: any) => {
     try {
-      const response = await fetch(`/api/customers/${params.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
-      const data = await response.json();
-      if (!response.ok) {
+      // استخدام apiClient الذي يحتوي على التوكن تلقائياً
+      const response = await apiClient.put(`/customers/${params.id}`, values);
+      const data = response.data;
+      
+      if (!data.success) {
         throw new Error(data.error || t('submissionFailed'));
       }
+      
       toast.success(t('customerUpdatedSuccessfully'));
       router.push(`/${locale}/customers`);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('unknownError'));
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.error || error.message || t('unknownError');
+      toast.error(errorMessage);
     }
   };
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`/api/customers/${params.id}`, {
-        method: 'DELETE',
-      });
-      const data = await response.json();
-      if (!response.ok) {
+      // استخدام apiClient الذي يحتوي على التوكن تلقائياً
+      const response = await apiClient.delete(`/customers/${params.id}`);
+      const data = response.data;
+      
+      if (!data.success) {
         throw new Error(data.error || t('submissionFailed'));
       }
+      
       toast.success(t('customerDeletedSuccessfully'));
       router.push(`/${locale}/customers`);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('unknownError'));
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.error || error.message || t('unknownError');
+      toast.error(errorMessage);
     }
   };
 

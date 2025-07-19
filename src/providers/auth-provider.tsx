@@ -1,9 +1,9 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { AuthService, LoginCredentials } from '@/lib/auth';
-import { toast } from 'sonner';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { AuthService, LoginCredentials } from "@/lib/auth";
+import { toast } from "sonner";
 
 interface User {
   id: number;
@@ -34,11 +34,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // التحقق من وجود مستخدم محفوظ عند تحميل التطبيق
     const savedUser = AuthService.getUser();
     const token = AuthService.getToken();
-    
+
     if (savedUser && token) {
       setUser(savedUser);
     }
-    
+
     setIsLoading(false);
   }, []);
 
@@ -46,27 +46,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setIsLoading(true);
       const response = await AuthService.login(credentials);
-      
+
       if (response.success && response.result) {
-        const { 
-          accessToken, 
-          refreshToken, 
-          expiresIn, 
-          user: userData 
+        const {
+          accessToken,
+          refreshToken,
+          expiresIn,
+          user: userData,
         } = response.result;
-        
+
         AuthService.saveToken(accessToken, refreshToken, expiresIn);
         AuthService.saveUser(userData);
         setUser(userData);
-        
-        toast.success('تم تسجيل الدخول بنجاح!');
+
+        toast.success("تم تسجيل الدخول بنجاح!");
         return true;
       } else {
-        toast.error(response.error?.message || 'فشل في تسجيل الدخول');
+        toast.error(response.error?.message || "فشل في تسجيل الدخول");
         return false;
       }
     } catch (error: any) {
-      toast.error(error.message || 'حدث خطأ أثناء تسجيل الدخول');
+      toast.error(error.message || "حدث خطأ أثناء تسجيل الدخول");
       return false;
     } finally {
       setIsLoading(false);
@@ -76,11 +76,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     AuthService.logout();
     setUser(null);
-    toast.success('تم تسجيل الخروج بنجاح');
-    
+    toast.success("تم تسجيل الخروج بنجاح");
+
     // استخراج الـ locale من المسار الحالي
-    const locale = pathname.split('/')[1] || 'ar'; // افتراضي العربية
-    
+    const locale = pathname.split("/")[1] || "ar"; // افتراضي العربية
+
     // إعادة التوجيه إلى صفحة تسجيل الدخول مع الـ locale
     router.push(`/${locale}/login`);
   };
@@ -93,17 +93,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

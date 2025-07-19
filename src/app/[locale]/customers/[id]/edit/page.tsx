@@ -4,6 +4,7 @@ import { CustomerForm } from '@/components/customers/CustomerForm';
 import { useRouter } from 'next/navigation';
 import { useTranslations, useLocale } from "next-intl";
 import { useEffect, useState } from 'react';
+import { apiClient } from '@/lib/api-client';
 import toast from 'react-hot-toast';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -19,14 +20,18 @@ export default function EditCustomerPage({ params }: { params: { id: string } })
   useEffect(() => {
     const fetchCustomer = async () => {
       try {
-        const response = await fetch(`/api/customers/${params.id}`);
-        if (!response.ok) {
-          throw new Error(t('customerNotFound'));
+        // استخدام apiClient الذي يحتوي على التوكن تلقائياً
+        const response = await apiClient.get(`/customers/${params.id}`);
+        const data = response.data;
+        
+        if (!data.success) {
+          throw new Error(data.error || t('customerNotFound'));
         }
-        const data = await response.json();
+        
         setCustomer(data.data);
-      } catch (error) {
-        toast.error(error instanceof Error ? error.message : t('unknownError'));
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.error || error.message || t('unknownError');
+        toast.error(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -37,22 +42,19 @@ export default function EditCustomerPage({ params }: { params: { id: string } })
 
   const handleSubmit = async (values: any) => {
     try {
-      const response = await fetch(`/api/customers/${params.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (!response.ok) {
-        throw new Error(t('errors.submissionFailed'));
+      // استخدام apiClient الذي يحتوي على التوكن تلقائياً
+      const response = await apiClient.put(`/customers/${params.id}`, values);
+      const data = response.data;
+      
+      if (!data.success) {
+        throw new Error(data.error || t('errors.submissionFailed'));
       }
 
       toast.success(t('updateSuccess'));
       router.push(`/${locale}/customers`);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t('unknownError'));
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.error || error.message || t('unknownError');
+      toast.error(errorMessage);
     }
   };
 

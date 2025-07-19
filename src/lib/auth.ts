@@ -80,12 +80,18 @@ export class AuthService {
   static getToken(): string | null {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem(this.TOKEN_KEY);
+      console.log('🔑 AuthService.getToken() called:', {
+        tokenExists: !!token,
+        tokenPreview: token?.substring(0, 30) + '...',
+        isExpired: token ? this.isTokenExpired() : false
+      });
       
       // تحقق من انتهاء صلاحية التوكن
       if (token && this.isTokenExpired()) {
-        console.log('Token expired, attempting refresh...');
+        console.log('⚠️ Token expired, attempting refresh...');
         // يمكن هنا محاولة تجديد التوكن تلقائياً
         // this.refreshToken();
+        return null; // إرجاع null إذا كان التوكن منتهي الصلاحية
       }
       
       return token;
@@ -106,6 +112,8 @@ export class AuthService {
     }
     return null;
   }
+
+
 
   static logout(): void {
     if (typeof window !== 'undefined') {

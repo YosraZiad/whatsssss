@@ -5,6 +5,7 @@ import { CustomersTable } from '@/components/customers/CustomersTable';
 import { useCustomers } from '@/hooks/useCustomers';
 import { useRouter } from 'next/navigation';
 import { Customer } from '@/types/customer';
+import { apiClient } from '@/lib/api-client';
 import toast from 'react-hot-toast'; // Correct import
 
 export default function CustomersPage() {
@@ -24,22 +25,20 @@ export default function CustomersPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch(`/api/customers/${id}`, {
-        method: 'DELETE',
-      });
+      // استخدام apiClient الذي يحتوي على التوكن تلقائياً
+      const response = await apiClient.delete(`/customers/${id}`);
+      const data = response.data;
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || t('deleteError'));
+      if (!data.success) {
+        throw new Error(data.error || t('deleteError'));
       }
 
       toast.success(t('deleteSuccess')); // Correct toast usage
       await refetch();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting customer:', error);
-      toast.error(
-        error instanceof Error ? error.message : t('deleteError')
-      );
+      const errorMessage = error.response?.data?.error || error.message || t('deleteError');
+      toast.error(errorMessage);
       throw error;
     }
   };

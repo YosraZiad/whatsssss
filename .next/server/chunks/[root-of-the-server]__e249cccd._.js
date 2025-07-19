@@ -179,13 +179,30 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib
 ;
 ;
 const API_BASE = 'https://neosending.com/api/neosending/Whatsapp';
-const API_TOKEN = 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjQ3ODA0NjgxQzMzMzc2NUYwMTMwRkQxQzEwRjZBNEM4QjhFMTk5MzAiLCJ4NXQiOiJSNEJHZ2NNemRsOEJNUDBjRVBha3lMamhtVEEiLCJ0eXAiOiJhdCtqd3QifQ.eyJpc3MiOiJodHRwczovL25lb3NlbmRpbmcuY29tLyIsImV4cCI6MTc4NDAxNjg5NSwiaWF0IjoxNzUyNDgwODk1LCJhdWQiOiJXaGF0c2FwcCIsInNjb3BlIjoiV2hhdHNhcHAiLCJqdGkiOiIwYzI3ZTkyOS02ODZhLTQxNzMtOTgzZS1jMmVkZjUwZjcyZWQiLCJzdWIiOiI4NGU3MmQ0OC0wNWNlLTJmNzgtYjFiMy0zYTFhZGVhMmIxZTUiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ3ZWIiLCJlbWFpbCI6IndlYkBnbWFpbC5jb20iLCJnaXZlbl9uYW1lIjoid2ViIiwiZmFtaWx5X25hbWUiOiJ0ZXN0IiwicGhvbmVfbnVtYmVyIjoiNzc3Nzc3Nzc3IiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjoiRmFsc2UiLCJlbWFpbF92ZXJpZmllZCI6IkZhbHNlIiwidW5pcXVlX25hbWUiOiJ3ZWIiLCJvaV9wcnN0IjoiV2hhdHNhcHBfQXBwIiwiY2xpZW50X2lkIjoiV2hhdHNhcHBfQXBwIiwib2lfdGtuX2lkIjoiNDI2NTQ2YzUtMjBhYi1hMzhjLTQ1M2UtM2ExYjFhMmQyYjJkIn0.JtO8wstX0e9gayzVKJ1_IuyE7TXJBphM0d4rH1PrUKAbRbebLFqHvKXDOg5IYNMlKcreL4SEF4AH3YNrJuKcCfVY74xXF4sK5dFesHZPPy9p208I6yodzh9tYJ9kBDKnDHTW8OivTsYshy2LO9CweVExgNVdsdKWrYMT4k5u9M9a8oZPWQYyiuh9nyi6Hphx25zMToeojHB-ARBvmp9x4Pi3y6_mqJsEiKO6pSSkajiW4KeDLvyyz6Tr2IlSzBxk2ko_ZwXM5iicueVjhqiLIXkzA8YZEZmCUJyRhAiln14w_gRhqhj-b0VYuJRH-mHNENMHvCDb7EQ4C5ppMgZ-NA';
-async function GET() {
+// دالة لاستخراج التوكن من الهيدر
+function getAuthToken(request) {
+    const authHeader = request.headers.get('authorization');
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        return authHeader;
+    }
+    return null;
+}
+async function GET(request) {
     try {
+        // استخراج التوكن من الهيدر
+        const authToken = getAuthToken(request);
+        if (!authToken) {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+                success: false,
+                error: 'لم يتم توفير توكن المصادقة'
+            }, {
+                status: 401
+            });
+        }
         const response = await __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$axios$2f$lib$2f$axios$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].get(`${API_BASE}/customer`, {
             headers: {
                 'Accept': 'application/json',
-                'Authorization': API_TOKEN
+                'Authorization': authToken
             },
             timeout: 30000
         });
@@ -225,6 +242,16 @@ async function GET() {
 }
 async function POST(request) {
     try {
+        // استخراج التوكن من الهيدر
+        const authToken = getAuthToken(request);
+        if (!authToken) {
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+                success: false,
+                error: 'لم يتم توفير توكن المصادقة'
+            }, {
+                status: 401
+            });
+        }
         const requestData = await request.json();
         // التحقق من الحقول المطلوبة
         const requiredFields = [
@@ -246,7 +273,7 @@ async function POST(request) {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'text/plain',
-                'Authorization': API_TOKEN
+                'Authorization': authToken
             }
         });
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({

@@ -15,8 +15,13 @@ const createApiClient = (): AxiosInstance => {
   client.interceptors.request.use(
     (config) => {
       const token = AuthService.getToken();
+      console.log('🔍 Token retrieved:', token ? 'Found' : 'Not found', token?.substring(0, 20) + '...');
+      
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+        console.log('✅ Authorization header set');
+      } else {
+        console.log('❌ No token found, Authorization header not set');
       }
       
       console.log('API Request:', {

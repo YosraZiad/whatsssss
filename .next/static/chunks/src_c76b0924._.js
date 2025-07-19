@@ -77,11 +77,17 @@ class AuthService {
     static getToken() {
         if ("TURBOPACK compile-time truthy", 1) {
             const token = localStorage.getItem(this.TOKEN_KEY);
+            console.log('🔑 AuthService.getToken() called:', {
+                tokenExists: !!token,
+                tokenPreview: (token === null || token === void 0 ? void 0 : token.substring(0, 30)) + '...',
+                isExpired: token ? this.isTokenExpired() : false
+            });
             // تحقق من انتهاء صلاحية التوكن
             if (token && this.isTokenExpired()) {
-                console.log('Token expired, attempting refresh...');
-            // يمكن هنا محاولة تجديد التوكن تلقائياً
-            // this.refreshToken();
+                console.log('⚠️ Token expired, attempting refresh...');
+                // يمكن هنا محاولة تجديد التوكن تلقائياً
+                // this.refreshToken();
+                return null; // إرجاع null إذا كان التوكن منتهي الصلاحية
             }
             return token;
         }
@@ -226,15 +232,15 @@ function AuthProvider(param) {
                 __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AuthService"].saveToken(accessToken, refreshToken, expiresIn);
                 __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AuthService"].saveUser(userData);
                 setUser(userData);
-                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].success('تم تسجيل الدخول بنجاح!');
+                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].success("تم تسجيل الدخول بنجاح!");
                 return true;
             } else {
                 var _response_error;
-                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error(((_response_error = response.error) === null || _response_error === void 0 ? void 0 : _response_error.message) || 'فشل في تسجيل الدخول');
+                __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error(((_response_error = response.error) === null || _response_error === void 0 ? void 0 : _response_error.message) || "فشل في تسجيل الدخول");
                 return false;
             }
         } catch (error) {
-            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error(error.message || 'حدث خطأ أثناء تسجيل الدخول');
+            __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].error(error.message || "حدث خطأ أثناء تسجيل الدخول");
             return false;
         } finally{
             setIsLoading(false);
@@ -243,9 +249,9 @@ function AuthProvider(param) {
     const logout = ()=>{
         __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AuthService"].logout();
         setUser(null);
-        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].success('تم تسجيل الخروج بنجاح');
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$sonner$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["toast"].success("تم تسجيل الخروج بنجاح");
         // استخراج الـ locale من المسار الحالي
-        const locale = pathname.split('/')[1] || 'ar'; // افتراضي العربية
+        const locale = pathname.split("/")[1] || "ar"; // افتراضي العربية
         // إعادة التوجيه إلى صفحة تسجيل الدخول مع الـ locale
         router.push("/".concat(locale, "/login"));
     };
@@ -261,8 +267,8 @@ function AuthProvider(param) {
         children: children
     }, void 0, false, {
         fileName: "[project]/src/providers/auth-provider.tsx",
-        lineNumber: 97,
-        columnNumber: 5
+        lineNumber: 96,
+        columnNumber: 10
     }, this);
 }
 _s(AuthProvider, "JVriBUARie7obrsfVZhTfTjwm5w=", false, function() {
@@ -276,7 +282,7 @@ function useAuth() {
     _s1();
     const context = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useContext"])(AuthContext);
     if (context === undefined) {
-        throw new Error('useAuth must be used within an AuthProvider');
+        throw new Error("useAuth must be used within an AuthProvider");
     }
     return context;
 }

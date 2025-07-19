@@ -2,7 +2,15 @@ import { NextResponse } from 'next/server';
 import axios from 'axios';
 
 const API_BASE = 'https://neosending.com/api/neosending/Whatsapp';
-const API_TOKEN = process.env.API_TOKEN || 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjQ3ODA0NjgxQzMzMzc2NUYwMTMwRkQxQzEwRjZBNEM4QjhFMTk5MzAiLCJ4NXQiOiJSNEJHZ2NNemRsOEJNUDBjRVBha3lMamhtVEEiLCJ0eXAiOiJhdCtqd3QifQ.eyJpc3MiOiJodHRwczovL25lb3NlbmRpbmcuY29tLyIsImV4cCI6MTc4NDAxNjg5NSwiaWF0IjoxNzUyNDgwODk1LCJhdWQiOiJXaGF0c2FwcCIsInNjb3BlIjoiV2hhdHNhcHAiLCJqdGkiOiIwYzI3ZTkyOS02ODZhLTQxNzMtOTgzZS1jMmVkZjUwZjcyZWQiLCJzdWIiOiI4NGU3MmQ0OC0wNWNlLTJmNzgtYjFiMy0zYTFhZGVhMmIxZTUiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ3ZWIiLCJlbWFpbCI6IndlYkBnbWFpbC5jb20iLCJnaXZlbl9uYW1lIjoid2ViIiwiZmFtaWx5X25hbWUiOiJ0ZXN0IiwicGhvbmVfbnVtYmVyIjoiNzc3Nzc3Nzc3IiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjoiRmFsc2UiLCJlbWFpbF92ZXJpZmllZCI6IkZhbHNlIiwidW5pcXVlX25hbWUiOiJ3ZWIiLCJvaV9wcnN0IjoiV2hhdHNhcHBfQXBwIiwiY2xpZW50X2lkIjoiV2hhdHNhcHBfQXBwIiwib2lfdGtuX2lkIjoiNDI2NTQ2YzUtMjBhYi1hMzhjLTQ1M2UtM2ExYjFhMmQyYjJkIn0.JtO8wstX0e9gayzVKJ1_IuyE7TXJBphM0d4rH1PrUKAbRbebLFqHvKXDOg5IYNMlKcreL4SEF4AH3YNrJuKcCfVY74xXF4sK5dFesHZPPy9p208I6yodzh9tYJ9kBDKnDHTW8OivTsYshy2LO9CweVExgNVdsdKWrYMT4k5u9M9a8oZPWQYyiuh9nyi6Hphx25zMToeojHB-ARBvmp9x4Pi3y6_mqJsEiKO6pSSkajiW4KeDLvyyz6Tr2IlSzBxk2ko_ZwXM5iicueVjhqiLIXkzA8YZEZmCUJyRhAiln14w_gRhqhj-b0VYuJRH-mHNENMHvCDb7EQ4C5ppMgZ-NA';
+
+// دالة لاستخراج التوكن من الهيدر
+function getAuthToken(request: Request): string | null {
+  const authHeader = request.headers.get('authorization');
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader;
+  }
+  return null;
+}
 
 // Helper function for error responses
 function errorResponse(message: string, status: number, details?: any) {
@@ -14,19 +22,25 @@ function errorResponse(message: string, status: number, details?: any) {
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params;
 
     if (!id || isNaN(Number(id))) {
       return errorResponse('معرف العميل غير صالح', 400);
     }
 
+    // استخراج التوكن من الهيدر
+    const authToken = getAuthToken(request);
+    if (!authToken) {
+      return errorResponse('لم يتم توفير توكن المصادقة', 401);
+    }
+
     const response = await axios.get(`${API_BASE}/customer/${id}`, {
       headers: {
         'Accept': 'application/json',
-        'Authorization': API_TOKEN
+        'Authorization': authToken
       },
       timeout: 15000
     });
@@ -48,13 +62,19 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params;
 
     if (!id || isNaN(Number(id))) {
       return errorResponse('معرف العميل غير صالح', 400);
+    }
+
+    // استخراج التوكن من الهيدر
+    const authToken = getAuthToken(request);
+    if (!authToken) {
+      return errorResponse('لم يتم توفير توكن المصادقة', 401);
     }
 
     const requestData = await request.json();
@@ -63,7 +83,7 @@ export async function PUT(
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': API_TOKEN
+        'Authorization': authToken
       },
       timeout: 15000
     });
@@ -85,9 +105,9 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = params.id;
+  const { id } = await params;
 
   if (!id || isNaN(Number(id))) {
     return NextResponse.json(
@@ -96,11 +116,20 @@ export async function DELETE(
     );
   }
 
+  // استخراج التوكن من الهيدر
+  const authToken = getAuthToken(request);
+  if (!authToken) {
+    return NextResponse.json(
+      { success: false, error: 'لم يتم توفير توكن المصادقة' },
+      { status: 401 }
+    );
+  }
+
   try {
     const response = await axios.delete(`${API_BASE}/customer/${id}`, {
       headers: {
         'Accept': 'text/plain', // فقط هذا الهيدر
-        'Authorization': API_TOKEN
+        'Authorization': authToken
       },
       timeout: 10000
     });

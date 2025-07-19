@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { Customer } from '@/types/customer';
+import { apiClient } from '@/lib/api-client';
 
 interface ApiResponse {
   success: boolean;
@@ -28,13 +29,9 @@ export function useCustomers() {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
       
-      const response = await fetch('/api/customers');
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data: ApiResponse = await response.json();
+      // استخدام apiClient الذي يحتوي على التوكن تلقائياً
+      const response = await apiClient.get('/customers');
+      const data: ApiResponse = response.data;
 
       if (!data.success) {
         throw new Error(data.error || 'API request failed');
@@ -47,12 +44,12 @@ export function useCustomers() {
         totalCount: data.totalCount || 0,
       });
       
-    } catch (err) {
+    } catch (err: any) {
       console.error('Fetch Error:', err);
       setState({
         customers: [],
         loading: false,
-        error: err instanceof Error ? err.message : 'Unknown error',
+        error: err.response?.data?.error || err.message || 'Unknown error',
         totalCount: 0,
       });
     }

@@ -1,5 +1,8 @@
 {
   "/[locale]/api-test/page": "app/[locale]/api-test/page.js",
+  "/[locale]/customers/[id]/edit/page": "app/[locale]/customers/[id]/edit/page.js",
+  "/[locale]/customers/[id]/page": "app/[locale]/customers/[id]/page.js",
+  "/[locale]/customers/add/page": "app/[locale]/customers/add/page.js",
   "/[locale]/customers/page": "app/[locale]/customers/page.js",
   "/[locale]/dashboard/page": "app/[locale]/dashboard/page.js",
   "/[locale]/login/page": "app/[locale]/login/page.js",
@@ -9,6 +12,7 @@
   "/[locale]/test-login/page": "app/[locale]/test-login/page.js",
   "/_not-found/page": "app/_not-found/page.js",
   "/api/auth/login/route": "app/api/auth/login/route.js",
+  "/api/customers/[id]/route": "app/api/customers/[id]/route.js",
   "/api/customers/route": "app/api/customers/route.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/page": "app/page.js"
