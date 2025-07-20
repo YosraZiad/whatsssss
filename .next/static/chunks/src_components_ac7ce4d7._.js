@@ -2374,7 +2374,7 @@ function DataTable(param) {
         columnNumber: 5
     }, this);
 }
-_s2(DataTable, "vQgbMU5twrtY41pqQrnqncFW0VY=", false, function() {
+_s2(DataTable, "Az28e6IXjb9s23hqANPdHo5sPdM=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$dnd$2d$kit$2f$core$2f$dist$2f$core$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useSensors"],
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$tanstack$2f$react$2d$table$2f$build$2f$lib$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["useReactTable"]

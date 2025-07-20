@@ -217,8 +217,12 @@ const createApiClient = ()=>{
     // إضافة interceptor للطلبات لإرفاق التوكن تلقائياً
     client.interceptors.request.use((config)=>{
         const token = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AuthService"].getToken();
+        console.log('🔍 Token retrieved:', token ? 'Found' : 'Not found', token?.substring(0, 20) + '...');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
+            console.log('✅ Authorization header set');
+        } else {
+            console.log('❌ No token found, Authorization header not set');
         }
         console.log('API Request:', {
             method: config.method?.toUpperCase(),
@@ -245,7 +249,7 @@ const createApiClient = ()=>{
         if (error.response?.status === 401) {
             console.log('Unauthorized access, logging out...');
             __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AuthService"].logout();
-            // إعادة توجيه إلى صفحة تسجيل الدخول
+            // إعادة توجيه إلى صفحة تسجيل الدخول مع مراعاة الـ locale
             if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
             ;
         }

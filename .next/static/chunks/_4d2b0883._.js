@@ -276,8 +276,12 @@ const createApiClient = ()=>{
         "createApiClient.use": (config)=>{
             var _config_method;
             const token = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AuthService"].getToken();
+            console.log('🔍 Token retrieved:', token ? 'Found' : 'Not found', (token === null || token === void 0 ? void 0 : token.substring(0, 20)) + '...');
             if (token) {
                 config.headers.Authorization = "Bearer ".concat(token);
+                console.log('✅ Authorization header set');
+            } else {
+                console.log('❌ No token found, Authorization header not set');
             }
             console.log('API Request:', {
                 method: (_config_method = config.method) === null || _config_method === void 0 ? void 0 : _config_method.toUpperCase(),
@@ -311,9 +315,11 @@ const createApiClient = ()=>{
             if (((_error_response = error.response) === null || _error_response === void 0 ? void 0 : _error_response.status) === 401) {
                 console.log('Unauthorized access, logging out...');
                 __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$auth$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AuthService"].logout();
-                // إعادة توجيه إلى صفحة تسجيل الدخول
+                // إعادة توجيه إلى صفحة تسجيل الدخول مع مراعاة الـ locale
                 if ("TURBOPACK compile-time truthy", 1) {
-                    window.location.href = '/login';
+                    const currentPath = window.location.pathname;
+                    const locale = currentPath.split('/')[1] || 'ar'; // افتراضي العربية
+                    window.location.href = "/".concat(locale, "/login");
                 }
             }
             return Promise.reject(error);
