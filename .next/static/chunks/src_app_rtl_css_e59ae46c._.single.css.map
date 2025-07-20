@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/src/app/rtl.css"],"sourcesContent":["/* RTL specific styles for sidebar */\r\n[dir=\"rtl\"] [data-slot=\"sidebar-container\"] {\r\n  transition-property: all;\r\n}\r\n\r\n/* Reverse sidebar animation direction for RTL */\r\n[dir=\"rtl\"] [data-side=\"left\"] {\r\n  right: 0 !important;\r\n  left: auto !important;\r\n}\r\n\r\n[dir=\"rtl\"]\r\n  [data-state=\"collapsed\"][data-collapsible=\"offcanvas\"]\r\n  [data-slot=\"sidebar-container\"] {\r\n  right: calc(var(--sidebar-width) * -1) !important;\r\n  left: auto !important;\r\n}\r\n\r\n/* Fix sidebar gap for RTL */\r\n[dir=\"rtl\"] [data-slot=\"sidebar-gap\"] {\r\n  transform: rotate(0) !important;\r\n  width: 0 !important;\r\n}\r\n\r\n[dir=\"rtl\"] [data-side=\"right\"][data-slot=\"sidebar-gap\"] {\r\n  transform: rotate(180deg) !important;\r\n}\r\n\r\nmain[data-slot=\"sidebar-inset\"] {\r\n  transition: all 0.3s ease-in-out;\r\n}\r\n\r\n/* Expand content when sidebar is collapsed in RTL */\r\n[dir=\"rtl\"] [data-state=\"collapsed\"] + main[data-slot=\"sidebar-inset\"] {\r\n  margin-right: calc(var(--sidebar-width) * -1) !important;\r\n  width: 100% !important;\r\n}\r\n"],"names":[],"mappings":"AACA;;;;AAKA;;;;;AAKA;;;;;AAQA;;;;;AAKA;;;;AAIA;;;;AAKA"}}]
-}
