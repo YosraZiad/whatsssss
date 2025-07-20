@@ -1,11 +1,1 @@
-{
-  "version": 4,
-  "routes": {},
-  "dynamicRoutes": {},
-  "notFoundRoutes": [],
-  "preview": {
-    "previewModeId": "ff2303bac23bcd8ec788aaec7913c50b",
-    "previewModeSigningKey": "ec88df115afcb096be70887abf2d8b1251759f4cc62e8b21c24ea2aecfd821d7",
-    "previewModeEncryptionKey": "9e81959558e822cac0b75f4c2f6252a6800aa9ab2f46b5b84fa97fe7e992b367"
-  }
-}
+{"version":4,"routes":{"/en":{},"/ar":{},"/en/dashboard":{},"/ar/dashboard":{},"/en/customers":{},"/ar/customers":{},"/en/login":{},"/ar/login":{},"/en/api-test":{},"/ar/api-test":{}},"dynamicRoutes":{"/[locale]":{"fallback":null},"/[locale]/dashboard":{"fallback":null},"/[locale]/customers":{"fallback":null},"/[locale]/login":{"fallback":null},"/[locale]/api-test":{"fallback":null}},"notFoundRoutes":[],"preview":{"previewModeId":"ff2303bac23bcd8ec788aaec7913c50b","previewModeSigningKey":"ec88df115afcb096be70887abf2d8b1251759f4cc62e8b21c24ea2aecfd821d7","previewModeEncryptionKey":"9e81959558e822cac0b75f4c2f6252a6800aa9ab2f46b5b84fa97fe7e992b367"}}

@@ -1,0 +1,19 @@
+/* [project]/src/app/header.css [app-client] (css) */
+header > div {
+  display: block;
+}
+
+#header-controls {
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  display: flex;
+}
+
+#header-controls > .triggers {
+  flex-direction: row;
+  align-items: center;
+  display: flex;
+}
+
+/*# sourceMappingURL=src_app_header_css_e59ae46c._.single.css.map*/

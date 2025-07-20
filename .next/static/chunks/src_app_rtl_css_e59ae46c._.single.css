@@ -1,0 +1,34 @@
+/* [project]/src/app/rtl.css [app-client] (css) */
+[dir="rtl"] [data-slot="sidebar-container"] {
+  transition-property: all;
+}
+
+[dir="rtl"] [data-side="left"] {
+  left: auto !important;
+  right: 0 !important;
+}
+
+[dir="rtl"] [data-state="collapsed"][data-collapsible="offcanvas"] [data-slot="sidebar-container"] {
+  right: calc(var(--sidebar-width) * -1) !important;
+  left: auto !important;
+}
+
+[dir="rtl"] [data-slot="sidebar-gap"] {
+  width: 0 !important;
+  transform: rotate(0) !important;
+}
+
+[dir="rtl"] [data-side="right"][data-slot="sidebar-gap"] {
+  transform: rotate(180deg) !important;
+}
+
+main[data-slot="sidebar-inset"] {
+  transition: all .3s ease-in-out;
+}
+
+[dir="rtl"] [data-state="collapsed"] + main[data-slot="sidebar-inset"] {
+  margin-right: calc(var(--sidebar-width) * -1) !important;
+  width: 100% !important;
+}
+
+/*# sourceMappingURL=src_app_rtl_css_e59ae46c._.single.css.map*/
